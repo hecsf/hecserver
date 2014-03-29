@@ -1,0 +1,10 @@
+{% extends "server/base.html" %}
+{% block title %}Sending SMSs{% endblock %}
+
+{% block content %}
+<ul>
+{% for surveys in surveys.all %}
+    <li>{{ survey.user.name }} - {{ survey.external_id }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

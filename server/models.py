@@ -12,8 +12,8 @@ class User(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=255)
     phone_number = models.CharField(max_length=50)
-    last_contact = models.DateTimeField(blank=True)
-    last_reply = models.DateTimeField(blank=True)
+    last_contact = models.DateTimeField(blank=True, null=True)
+    last_reply = models.DateTimeField(blank=True, null=True)
     last_employer = models.ForeignKey('Employer', blank=True, null=True)
 
     def __unicode__(self):
@@ -22,9 +22,9 @@ class User(models.Model):
 class Survey(models.Model):
     user = models.ForeignKey('User', blank=False)
     date_sent = models.DateTimeField(blank=False)
-    date_replied = models.DateTimeField(blank=True)
+    date_replied = models.DateTimeField(blank=True, null=True)
     external_id = models.CharField(max_length=200)
-    reply = models.TextField(blank=True)
+    reply = models.TextField(blank=True, null=True)
 
     def __unicode__(self):
         return self.user

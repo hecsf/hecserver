@@ -63,7 +63,7 @@ def periodic_check(request):
     now = timezone.now()
     localtime = timezone.localtime(now, timezone = pytz.timezone('US/Pacific'))
     result = []
-    if localtime.hour >= 10 and localtime.hour <= 6:
+    if localtime.hour >= 10 and localtime.hour <= 18:
         users = User.objects.all()
         for user in users:
             if (user.last_contact is None or 

@@ -32,11 +32,12 @@ def build_body_for(user):
     survey = Survey(user=user, date_sent=now, external_id=unique_id)
     survey.save()
     
-    url = tinyurl.create_one("http://www.surveygizmo.com/s3/%s/HEC-Alumni-Form?sguid=%s&employer=%s&role=%s&program=%s" % (
+    url = tinyurl.create_one("http://www.surveygizmo.com/s3/%s/HEC-Alumni-Form?sguid=%s&employer=%s&role=%s&program=%s&name=%s" % (
         settings.SURVEY_GIZMO_SURVEY_ID, unique_id,
         quote(user.last_employer.name if user.last_employer is not None else ""),
         quote(user.last_role if user.last_role is not None else ""),
         quote(user.last_program.name),
+        quote("%s %s" % (user.first_name, user.last_name)),
         ))
     return "Please complete this survey: %s" % url
 

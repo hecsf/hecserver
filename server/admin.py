@@ -5,4 +5,5 @@ from server.models import *
 
 admin.site.register(User)
 admin.site.register(Employer)
+admin.site.register(Program)
 admin.site.register(Survey)

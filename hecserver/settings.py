@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+TWILIO_ACCOUNT_SID = "AC82d60753961205b203960366b473fdab"
+TWILIO_AUTH_TOKEN  = "c9936326a39d39213509a0b54efcdaca"
+TWILIO_PHONE_NUMBER = "14157809109"
+
+SURVEY_GIZMO_USERNAME = "kgruneisen@ecs-sf.org"
+SURVEY_GIZMO_PASSWORD = "HEC123"
+SURVEY_GIZMO_SURVEY_ID = "1599451"
 
 import dj_database_url
 DATABASES = {}

@@ -8,6 +8,7 @@ gunicorn==18.0
 httplib2==0.8
 psycopg2==2.5.2
 pystache==0.5.3
+pytz==2014.2
 rauth==0.7.0
 requests==1.2.3
 six==1.6.1

@@ -2,6 +2,7 @@ from datetime import datetime
 from urllib import quote
 import json
 import uuid
+import pytz
 
 from django.conf import settings
 
@@ -60,21 +61,23 @@ def send_sms(request):
 
 def periodic_check(request):
     now = timezone.now()
+    localtime = timezone.localtime(now, timezone = pytz.timezone('US/Pacific'))
     result = []
-    users = User.objects.all()
-    for user in users:
-        if (user.last_contact is None or 
-            (user.last_reply is None and (now - user.last_contact).days > 7) or
-            (user.last_reply is not None and (now - user.last_reply).days > 30)
-        ):
-            body = build_body_for(user)
-            message = sms_send(body, "+1%s" % user.phone_number)
-            user.last_contact = now
-            user.save()
-            result.append({
-                'user' : user,
-                'external_id' : message,
-            })
+    if localtime.hour >= 10 and localtime.hour <= 6:
+        users = User.objects.all()
+        for user in users:
+            if (user.last_contact is None or 
+                (user.last_reply is None and (now - user.last_contact).days > 7) or
+                (user.last_reply is not None and (now - user.last_reply).days > 30)
+            ):
+                body = build_body_for(user)
+                message = sms_send(body, "+1%s" % user.phone_number)
+                user.last_contact = now
+                user.save()
+                result.append({
+                    'user' : user,
+                    'external_id' : message,
+                })
     return render(request, 'server/send_sms.html', {'surveys': result})
 
 

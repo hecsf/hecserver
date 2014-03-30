@@ -39,7 +39,7 @@ def build_body_for(user):
         quote(user.last_program.name),
         quote("%s %s" % (user.first_name, user.last_name)),
         ))
-    return "Please complete this survey: %s" % url
+    return "%s checking in! Time to complete the survey: %s. Thanks for staying in touch." % (user.last_program.name, url)
 
 
 def index(request):

@@ -35,7 +35,7 @@ def build_body_for(user):
     url = tinyurl.create_one("http://www.surveygizmo.com/s3/%s/HEC-Alumni-Form?sguid=%s&employer=%s&role=%s&program=%s" % (
         settings.SURVEY_GIZMO_SURVEY_ID, unique_id,
         quote(user.last_employer.name if user.last_employer is not None else ""),
-        quote(user.last_role),
+        quote(user.last_role if user.last_role is not None else ""),
         quote(user.last_program.name),
         ))
     return "Please complete this survey: %s" % url

@@ -83,24 +83,33 @@ def periodic_get_surveys(request):
     sg.config.password = settings.SURVEY_GIZMO_PASSWORD
     
     result = ""
-    response_dict = sg.api.surveyresponse.list(settings.SURVEY_GIZMO_SURVEY_ID)
-    for user_response in response_dict["data"]:
-        if "[url(\"sguid\")]" in user_response.keys():
-            unique_id = user_response["[url(\"sguid\")]"]
-            result += "Found id %s<br/>" % unique_id
-            try:
-                survey = Survey.objects.get(external_id = unique_id)
-                if survey.date_replied is None:
-                    survey.date_replied = timezone.now()
-                    survey.reply = json.dumps(user_response)
-                    survey.save()
-                    user.last_reply = timezone.now()
-                    user.save()
-                    result += "Found survey and saved<br/>"
-                else:
-                    result += "Already had survey<br/>"
+    page = 1
+    pages = 1
+    while page <= pages:
+        result += "getting page %d<br/>" % page
+        response_dict = sg.api.surveyresponse.list(settings.SURVEY_GIZMO_SURVEY_ID, page=page)
+        try:
+            pages = int(response_dict['total_pages'])
+        except:
+            result += json.dumps(response_dict)
+        page += 1
+        for user_response in response_dict["data"]:
+            if "[url(\"sguid\")]" in user_response.keys():
+                unique_id = user_response["[url(\"sguid\")]"]
+                result += "Found id %s<br/>" % unique_id
+                try:
+                    survey = Survey.objects.get(external_id = unique_id)
+                    if survey.date_replied is None:
+                        survey.date_replied = timezone.now()
+                        survey.reply = json.dumps(user_response)
+                        survey.save()
+                        user.last_reply = timezone.now()
+                        user.save()
+                        result += "Found survey and saved<br/>"
+                    else:
+                        result += "Already had survey<br/>"
                     
-            except ObjectDoesNotExist:
-                result += "Could not find survey<br/>"
+                except ObjectDoesNotExist:
+                    result += "Could not find survey<br/>"
 
     return HttpResponse(result)

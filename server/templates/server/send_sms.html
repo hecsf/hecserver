@@ -4,7 +4,7 @@
 {% block content %}
 <ul>
 {% for survey in surveys %}
-    <li>{{ survey.user.name }} - {{ survey.external_id }}</li>
+    <li>{{ survey.user.first_name }} - {{ survey.external_id }}</li>
 {% endfor %}
 </ul>
 <a href="/server/">Back</a>

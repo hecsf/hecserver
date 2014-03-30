@@ -16,6 +16,7 @@ import tinyurl
 
 from server.models import User
 from server.models import Survey
+from server.models import Employer
 
 def sms_send(body, to):
     client = TwilioRestClient(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -33,7 +34,7 @@ def build_body_for(user):
     
     url = tinyurl.create_one("http://www.surveygizmo.com/s3/%s/HEC-Alumni-Form?sguid=%s&employer=%s&role=%s&program=%s" % (
         settings.SURVEY_GIZMO_SURVEY_ID, unique_id,
-        quote(user.last_employer.name),
+        quote(user.last_employer.name if user.last_employer is not None else ""),
         quote(user.last_role),
         quote(user.last_program.name),
         ))
@@ -102,9 +103,33 @@ def periodic_get_surveys(request):
                     if survey.date_replied is None:
                         survey.date_replied = timezone.now()
                         survey.reply = json.dumps(user_response)
-                        survey.save()
                         survey.user.last_reply = timezone.now()
-                        survey.user.save()
+                        try:
+                            role = user_response['[question(36)]']
+                            company = user_response['[question(35)]']
+                            same_company = user_response['[question(12)]'] == "Yes"
+                            same_title = user_response['[question(13)]'] == "Yes"
+                            employed_somewhere_else = user_response['[question(37)]'] == "Yes"
+
+                            if role:
+                                survey.user.last_role = role
+                            if not same_company:
+                                if employed_somewhere_else:
+                                    try:
+                                        employer = Employer.objects.get(name=company)
+                                    except ObjectDoesNotExist:
+                                        employer = Employer(name=company)
+                                        employer.save()
+                                    survey.user.last_employer = employer
+                                else:
+                                    survey.user.last_employer = None
+                                    survey.user.last_role = None
+                            survey.save()
+                            survey.user.save()
+                        except Exception as e:
+                            result += "Exception: %s %s<br/>" % (e, user_response)
+                            pass
+
                         result += "Found survey and saved<br/>"
                     else:
                         result += "Already had survey<br/>"

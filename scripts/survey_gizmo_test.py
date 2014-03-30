@@ -15,5 +15,4 @@ sg.config.password = "HEC123"
 survey_id = "1599451"
 response_dict = sg.api.surveyresponse.list(survey_id)
 for user_response in response_dict["data"]:
-    if "[url(\"sguid\")]" in user_response.keys():
-        print user_response["[url(\"sguid\")]"]
+    print json.dumps(user_response, indent=2)

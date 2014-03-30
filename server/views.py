@@ -103,8 +103,8 @@ def periodic_get_surveys(request):
                         survey.date_replied = timezone.now()
                         survey.reply = json.dumps(user_response)
                         survey.save()
-                        user.last_reply = timezone.now()
-                        user.save()
+                        survey.user.last_reply = timezone.now()
+                        survey.user.save()
                         result += "Found survey and saved<br/>"
                     else:
                         result += "Already had survey<br/>"

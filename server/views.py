@@ -87,7 +87,7 @@ def periodic_get_surveys(request):
     page = 1
     pages = 1
     while page <= pages:
-        result += "getting page %d<br/>" % page
+        result += "getting page %d\n" % page
         response_dict = sg.api.surveyresponse.list(settings.SURVEY_GIZMO_SURVEY_ID, page=page)
         try:
             pages = int(response_dict['total_pages'])
@@ -97,7 +97,7 @@ def periodic_get_surveys(request):
         for user_response in response_dict["data"]:
             if "[url(\"sguid\")]" in user_response.keys():
                 unique_id = user_response["[url(\"sguid\")]"]
-                result += "Found id %s<br/>" % unique_id
+                result += "Found id %s\n" % unique_id
                 try:
                     survey = Survey.objects.get(external_id = unique_id)
                     if survey.date_replied is None:
@@ -127,14 +127,14 @@ def periodic_get_surveys(request):
                             survey.save()
                             survey.user.save()
                         except Exception as e:
-                            result += "Exception: %s %s<br/>" % (e, user_response)
+                            result += "Exception: %s %s\n" % (e, user_response)
                             pass
 
-                        result += "Found survey and saved<br/>"
+                        result += "Found survey and saved\n"
                     else:
-                        result += "Already had survey<br/>"
+                        result += "Already had survey\n"
                     
                 except ObjectDoesNotExist:
-                    result += "Could not find survey<br/>"
+                    result += "Could not find survey\n"
 
-    return HttpResponse(result)
+    return render(request, 'server/simple.html', {'result': result})

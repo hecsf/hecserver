@@ -2,10 +2,10 @@
 {% block title %}Sending SMSs{% endblock %}
 
 {% block content %}
+<a href="/server/" class="btn btn-primary" role="button">Back</a>
 <ul>
 {% for survey in surveys %}
     <li>{{ survey.user.first_name }} - {{ survey.external_id }}</li>
 {% endfor %}
 </ul>
-<a href="/server/">Back</a>
 {% endblock %}
